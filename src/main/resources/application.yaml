@@ -1,4 +1,17 @@
-# example values
+spring:
+  jpa:
+    database: POSTGRESQL
+    show-sql: false
+
+  datasource:
+    url: jdbc:postgresql://localhost:5432/search_engine
+    username: postgres
+    password: 2400024
+    driver-class-name: org.postgresql.Driver
+
+  liquibase:
+    enabled: true
+    change-log: classpath:/db/changelog/db.changelog-master.xml
 
 indexing-settings:
   sites:
