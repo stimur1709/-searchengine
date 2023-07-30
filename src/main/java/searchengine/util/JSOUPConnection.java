@@ -22,8 +22,7 @@ public class JSOUPConnection {
             Thread.sleep(1000);
             return new HtmlDocument(connect.get());
         } catch (IOException | InterruptedException e) {
-            log.error("Ошибка при подключении к {}: {}", url, e.getMessage());
-            return new HtmlDocument(408);
+            return new HtmlDocument(UrlInfo.getCode(e.getMessage()));
         }
     }
 

@@ -8,12 +8,10 @@ import searchengine.util.UrlInfo;
 public class HtmlDocument {
 
     private Document document;
-    private String content;
     private final int code;
 
     public HtmlDocument(Document document) {
         this.document = document;
-        this.content = UrlInfo.getContent(document);
         this.code = UrlInfo.getCode(document);
     }
 

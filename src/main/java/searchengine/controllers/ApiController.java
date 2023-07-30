@@ -1,13 +1,12 @@
 package searchengine.controllers;
 
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import searchengine.dto.statistics.Response;
 import searchengine.dto.statistics.StatisticsResponse;
+import searchengine.exception.SiteException;
 import searchengine.services.IndexingService;
-import searchengine.services.StatisticsService;
+import searchengine.services.SiteService;
 
 import java.util.concurrent.ExecutionException;
 
@@ -15,28 +14,32 @@ import java.util.concurrent.ExecutionException;
 @RequestMapping("/api")
 public class ApiController {
 
-    private final StatisticsService statisticsService;
     private final IndexingService indexingService;
+    private final SiteService siteService;
 
-    public ApiController(StatisticsService statisticsService, IndexingService indexingService) {
-        this.statisticsService = statisticsService;
+    public ApiController(IndexingService indexingService, SiteService siteService) {
         this.indexingService = indexingService;
+        this.siteService = siteService;
     }
 
     @GetMapping("/statistics")
     public ResponseEntity<StatisticsResponse> statistics() {
-        return ResponseEntity.ok(statisticsService.getStatistics());
+        return ResponseEntity.ok(siteService.getStatistics());
     }
 
     @GetMapping("/startIndexing")
-    public ResponseEntity<Response> startIndexing() throws InterruptedException, ExecutionException {
+    public ResponseEntity<Response> startIndexing() throws InterruptedException, ExecutionException, SiteException {
         return ResponseEntity.ok(indexingService.startIndexing());
     }
-
 
     @GetMapping("/stopIndexing")
     public ResponseEntity<Response> stopIndexing() {
         return ResponseEntity.ok(indexingService.stopIndexing());
+    }
+
+    @PostMapping("/indexPage")
+    public ResponseEntity<Response> lemma(@RequestParam String url) throws SiteException {
+        return ResponseEntity.ok(indexingService.startIndexing(url));
     }
 
 

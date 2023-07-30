@@ -2,6 +2,7 @@ package searchengine.model;
 
 import lombok.Getter;
 import lombok.Setter;
+import org.hibernate.annotations.Formula;
 
 import javax.persistence.*;
 import java.io.Serial;
@@ -28,6 +29,12 @@ public class Site implements Serializable {
     private String url;
     private String name;
 
+    @Formula("(select count(l.id) from lemma l where l.site_id = id)")
+    private long lemmas;
+
+    @Formula("(select count(p.id) from page p where p.site_id = id)")
+    private long pages;
+
     public Site indexing() {
         this.status = Status.INDEXING;
         this.lastError = null;
@@ -38,6 +45,11 @@ public class Site implements Serializable {
         this.status = pageCount > 0 ? Status.INDEXED : Status.FAILED;
         this.lastError = pageCount > 0 ? null : "Ошибка индексации: сайт не доступен";
         return this;
+    }
+
+    public void stop() {
+        this.status = Status.FAILED;
+        this.lastError = "Индексация остановлена пользователем";
     }
 
 }

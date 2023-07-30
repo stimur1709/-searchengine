@@ -22,14 +22,18 @@ public class UrlInfo {
         return attr.replace(url, "");
     }
 
-    public static String getContent(Document document) {
-        return document.html().replace("\n", "")
-                .replace("{", "")
-                .replace("}", "")
-                .replace("'", "");
-    }
-
     public static int getCode(Document document) {
         return document.connection().response().statusCode();
+    }
+
+    public static int getCode(String error) {
+        int code = 0;
+        String[] split = error.split(",");
+        for (String subs : split) {
+            if (subs.contains("Status")) {
+                code = Integer.parseInt(subs.substring(subs.indexOf("=") + 1));
+            }
+        }
+        return code;
     }
 }

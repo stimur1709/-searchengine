@@ -24,12 +24,16 @@
         </createTable>
     </changeSet>
     <changeSet id="1689253618718-1" author="STimur">
+        <comment>Create table 'Page'</comment>
         <createTable tableName="page">
-            <column name="site_id" type="BIGINT">
+            <column name="id" type="serial" autoIncrement="true">
                 <constraints nullable="false" primaryKey="true" primaryKeyName="pk_page"/>
             </column>
+            <column name="site_id" type="BIGINT">
+                <constraints nullable="false"/>
+            </column>
             <column name="path" type="VARCHAR(255)">
-                <constraints nullable="false" primaryKey="true" primaryKeyName="pk_page"/>
+                <constraints nullable="false"/>
             </column>
             <column name="code" type="INT">
                 <constraints nullable="false"/>
@@ -37,7 +41,11 @@
             <column name="content" type="mediumtext"/>
         </createTable>
     </changeSet>
-    <changeSet id="1248896465593-1" author="STimur">
+    <changeSet id="1690196562579-1" author="STimur">
+        <comment>Create unique constraint 'Page'</comment>
+        <addUniqueConstraint tableName="page" columnNames="site_id, path" constraintName="u_p_page"/>
+    </changeSet>
+    <changeSet id="1248432465593-1" author="STimur">
         <comment>Create foreign key for table 'Page'</comment>
         <addForeignKeyConstraint baseTableName="page" baseColumnNames="site_id" referencedTableName="site"
                                  referencedColumnNames="id" constraintName="fk_p_site_id" onUpdate="CASCADE"
@@ -46,5 +54,59 @@
     <changeSet id="1688898420408-1" author="STimur">
         <comment>insert data in table 'Site'</comment>
         <sqlFile path="db/changelog/script/09-07-23.sql"/>
+    </changeSet>
+    <changeSet id="1690197942269-1" author="STimur">
+        <comment>Create table 'Lemma'</comment>
+        <createTable tableName="lemma">
+            <column autoIncrement="true" name="id" type="BIGINT">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="pk_lemma"/>
+            </column>
+            <column name="site_id" type="BIGINT"/>
+            <column name="lemma" type="VARCHAR(255)"/>
+            <column name="frequency" type="INT" defaultValue="1">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+    <changeSet id="1328896465593-1" author="STimur">
+        <comment>Create foreign key for table 'Lemma'</comment>
+        <addForeignKeyConstraint baseTableName="lemma" baseColumnNames="site_id" referencedTableName="site"
+                                 referencedColumnNames="id" constraintName="fk_l_site_id" onUpdate="CASCADE"
+                                 onDelete="CASCADE"/>
+    </changeSet>
+    <changeSet id="1690198192969-1" author="Admin">
+        <comment>Create unique constraint 'Lemma'</comment>
+        <addUniqueConstraint tableName="lemma" columnNames="lemma, site_id" constraintName="u_l_lemma"/>
+    </changeSet>
+    <changeSet id="1690199048051-1" author="STimur">
+        <createTable tableName="index">
+            <column autoIncrement="true" name="id" type="BIGINT">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="pk_index"/>
+            </column>
+            <column name="page_id" type="BIGINT"/>
+            <column name="lemma_id" type="BIGINT"/>
+            <column name="rank" type="INT" defaultValue="1">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+    <changeSet id="1690199176696-1" author="STimur">
+        <addUniqueConstraint tableName="index" columnNames="PAGE_ID, LEMMA_ID" constraintName="u_index"/>
+    </changeSet>
+    <changeSet id="1248893265593-1" author="STimur">
+        <comment>Create foreign key for table 'Index'</comment>
+        <addForeignKeyConstraint baseTableName="index" baseColumnNames="page_id" referencedTableName="page"
+                                 referencedColumnNames="id" constraintName="fk_l_page_id" onUpdate="CASCADE"
+                                 onDelete="CASCADE"/>
+    </changeSet>
+    <changeSet id="1432896465593-1" author="STimur">
+        <comment>Create foreign key for table 'Index'</comment>
+        <addForeignKeyConstraint baseTableName="index" baseColumnNames="lemma_id" referencedTableName="lemma"
+                                 referencedColumnNames="id" constraintName="fk_l_lemma_id" onUpdate="CASCADE"
+                                 onDelete="CASCADE"/>
+    </changeSet>
+    <changeSet id="1443298420408-1" author="STimur">
+        <comment>create trigger in table 'Lemma' and 'Index'</comment>
+        <sqlFile path="db/changelog/script/24-07-23.sql"/>
     </changeSet>
 </databaseChangeLog>
