@@ -1,10 +1,13 @@
 package searchengine.util;
 
+import lombok.Getter;
+import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 import searchengine.dto.statistics.HtmlDocument;
 import searchengine.model.Site;
+import searchengine.model.Status;
 import searchengine.services.PageService;
 
 import java.util.HashSet;
@@ -12,39 +15,37 @@ import java.util.Set;
 import java.util.concurrent.RecursiveTask;
 
 @Slf4j
+@Getter
+@Setter
 public class SiteMap extends RecursiveTask<Site> {
 
     private final Site site;
     private final String url;
+    private final String path;
     private final PageService pageService;
 
     public SiteMap(Site site, PageService pageService) {
         this.site = site;
         this.url = site.getUrl();
+        this.path = "/";
         this.pageService = pageService;
     }
 
-    public SiteMap(SiteMap siteMap, String url) {
+    public SiteMap(SiteMap siteMap, String url, String path) {
         this.site = siteMap.site;
         this.url = url;
+        this.path = path;
         this.pageService = siteMap.pageService;
     }
 
     @Override
     public Site compute() {
-        Set<SiteMap> subTask = new HashSet<>();
-        if (Thread.currentThread().isInterrupted()) {
-            log.error(String.valueOf(111));
-            return this.site;
-        }
-        try {
+        if (site.getStatus() != Status.FAILED) {
+            Set<SiteMap> subTask = new HashSet<>();
             getChildren(subTask);
-        } catch (Exception e) {
-            return this.site;
-        }
-
-        for (SiteMap sitemap : subTask) {
-            sitemap.join();
+            for (SiteMap sitemap : subTask) {
+                sitemap.join();
+            }
         }
         return this.site;
     }
@@ -54,20 +55,24 @@ public class SiteMap extends RecursiveTask<Site> {
         if (html.getDocument() != null) {
             Elements elements = html.getDocument().select("a");
             for (Element element : elements) {
-                String attr = element.absUrl("href");
-                if (UrlInfo.isCorrectUrl(attr, site.getUrl()) && !MapStorage.containsUrl(site.getId(), attr)) {
-                    adding(attr, subTask);
+                if (site.getStatus() != Status.FAILED) {
+                    adding(element, subTask);
                 }
             }
         }
     }
 
-    private void adding(String attr, Set<SiteMap> subTask) {
-        MapStorage.add(site.getId(), attr);
-        SiteMap siteMap = new SiteMap(this, attr);
-        siteMap.fork();
-        subTask.add(siteMap);
-        pageService.save(site, attr);
+    private void adding(Element element, Set<SiteMap> subTask) {
+        String newUrl = element.absUrl("href");
+        if (UrlInfo.isCorrectUrl(newUrl, site.getUrl())) {
+            String newPath = UrlInfo.changeUrl(site.getUrl(), newUrl);
+            if (!UrlStorage.containsUrl(site.getId(), newPath)) {
+                SiteMap siteMap = new SiteMap(this, newUrl, newPath);
+                siteMap.fork();
+                subTask.add(siteMap);
+                pageService.save(siteMap);
+            }
+        }
     }
 
 }

@@ -8,30 +8,35 @@ import lombok.Setter;
 import javax.persistence.*;
 import java.io.Serial;
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
 
 @Getter
 @Setter
 @Entity
 @NoArgsConstructor
 @AllArgsConstructor
-public class Page implements Serializable {
+@Table(name = "LEMMA")
+public class LemmaTable implements Serializable {
 
     @Serial
-    private static final long serialVersionUID = 1532235231950251207L;
+    private static final long serialVersionUID = 1534212151950251207L;
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     @Column(name = "SITE_ID")
     private Long siteId;
-    private String path;
-    private int code;
-    private String content;
+    private String lemma;
+    private int frequency;
 
-    public Page(Long siteId, String path, int code, String content) {
+    @Transient
+    private List<Index> indexList = new ArrayList<>();
+
+    public LemmaTable(Long siteId, String lemma, int frequency) {
         this.siteId = siteId;
-        this.path = path;
-        this.code = code;
-        this.content = content;
+        this.lemma = lemma;
+        this.frequency = frequency;
     }
+
 }

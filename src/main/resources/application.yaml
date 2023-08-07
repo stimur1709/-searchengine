@@ -6,18 +6,9 @@ spring:
   datasource:
     url: jdbc:postgresql://localhost:5432/search_engine
     username: postgres
-    password: 2400024
+    password: 240024
     driver-class-name: org.postgresql.Driver
 
   liquibase:
     enabled: true
     change-log: classpath:/db/changelog/db.changelog-master.xml
-
-indexing-settings:
-  sites:
-    - url: https://www.lenta.ru
-      name: Лента.ру
-    - url: https://www.skillbox.ru
-      name: Skillbox
-    - url: https://www.playback.ru
-      name: PlayBack.Ru

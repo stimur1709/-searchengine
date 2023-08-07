@@ -4,13 +4,9 @@ import java.util.List;
 
 public interface ModelService<E, K> {
 
-    E findByKey(K k);
-
     List<E> findAll();
 
-    void save(E e);
-
-    boolean contains(K k);
+    E save(E e);
 
     void deleteById(K k);
 

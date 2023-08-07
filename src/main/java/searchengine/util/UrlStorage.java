@@ -4,15 +4,15 @@ import java.util.HashMap;
 import java.util.SortedSet;
 import java.util.TreeSet;
 
-public class MapStorage {
+public class UrlStorage {
 
-    private MapStorage() {
+    private UrlStorage() {
 
     }
 
     private static final HashMap<Long, SortedSet<String>> urls = new HashMap<>();
 
-    public static void add(long id, String url) {
+    private static void add(long id, String url) {
         SortedSet<String> strings = get(id);
         strings.add(url);
         urls.put(id, strings);
@@ -27,7 +27,11 @@ public class MapStorage {
     }
 
     public static boolean containsUrl(long id, String url) {
-        return get(id).contains(url);
+        boolean result = get(id).contains(url);
+        if (!result) {
+            add(id, url);
+        }
+        return result;
     }
 
 }

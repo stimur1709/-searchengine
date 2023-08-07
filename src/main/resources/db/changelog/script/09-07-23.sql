@@ -8,7 +8,7 @@ create or replace function trigger_page_in_up() returns trigger as
     end;
 'LANGUAGE plpgsql;
 
-create trigger balance_site_in_up_before
+create trigger site_in_up_after
     after insert or update
     on page
     for each row

@@ -14,24 +14,13 @@ public abstract class ModelServiceImpl<E, K, R extends JpaRepository<E, K>> impl
     }
 
     @Override
-    public E findByKey(K k) {
-        return repository.findById(k)
-                .orElseThrow();
-    }
-
-    @Override
     public List<E> findAll() {
         return repository.findAll();
     }
 
     @Override
-    public void save(E e) {
-        repository.save(e);
-    }
-
-    @Override
-    public boolean contains(K k) {
-        return repository.findById(k).isPresent();
+    public E save(E e) {
+        return repository.save(e);
     }
 
     @Override
