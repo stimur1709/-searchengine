@@ -17,6 +17,12 @@ public class LemmaStorage {
         add(key, 1);
     }
 
+    public void addAll(List<String> keys) {
+        for (String key : keys) {
+            add(key, 1);
+        }
+    }
+
     public void add(String key, int value) {
         if (key != null) {
             if (contains(key)) {

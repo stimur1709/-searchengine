@@ -7,6 +7,7 @@ import org.apache.lucene.morphology.russian.RussianLuceneMorphology;
 import searchengine.dto.statistics.Language;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -35,20 +36,27 @@ public class Morphology {
 
     public static LemmaStorage getMorphology(String text) {
         LemmaStorage storage = new LemmaStorage();
+        storage.addAll(getNormalWords(text));
+        return storage;
+    }
+
+    public static List<String> getNormalWords(String text) {
+        List<String> words = new ArrayList<>();
         text = TextParser.replaceText(text);
         for (String word : text.split(" ")) {
             word = word.trim();
             if (!word.isBlank() && word.length() > 2) {
                 Language language = checkLanguage(word);
                 if (language == Language.EN) {
-                    storage.add(getMorphInfo(englishLuceneMorph, word, EN_PARTS));
+                    words.add(getMorphInfo(englishLuceneMorph, word, EN_PARTS));
                 } else if (language == Language.RU) {
-                    storage.add(getMorphInfo(russianLuceneMorph, word, RU_PARTS));
+                    words.add(getMorphInfo(russianLuceneMorph, word, RU_PARTS));
                 }
             }
         }
-        return storage;
+        return words;
     }
+
 
     private static Language checkLanguage(String word) {
         if (LanguageChecker.isEnglish(word)) {

@@ -14,7 +14,8 @@ import java.io.Serializable;
 @Entity
 @NoArgsConstructor
 @AllArgsConstructor
-public class Page implements Serializable {
+@Table(name = "PAGE")
+public class PageTable implements Serializable {
 
     @Serial
     private static final long serialVersionUID = 1532235231950251207L;
@@ -28,7 +29,7 @@ public class Page implements Serializable {
     private int code;
     private String content;
 
-    public Page(Long siteId, String path, int code, String content) {
+    public PageTable(Long siteId, String path, int code, String content) {
         this.siteId = siteId;
         this.path = path;
         this.code = code;

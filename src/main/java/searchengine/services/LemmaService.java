@@ -5,8 +5,9 @@ import org.springframework.stereotype.Service;
 import searchengine.dao.IndexDao;
 import searchengine.dao.LemmaDao;
 import searchengine.model.LemmaTable;
-import searchengine.model.Page;
+import searchengine.model.PageTable;
 import searchengine.repository.LemmaRepository;
+import searchengine.repository.PageRepository;
 import searchengine.util.LemmaStorage;
 import searchengine.util.Morphology;
 
@@ -28,10 +29,10 @@ public class LemmaService extends ModelServiceImpl<LemmaTable, Long, LemmaReposi
         this.lemmaRepository = lemmaRepository;
     }
 
-    public synchronized void indexingContent(Page page, String text) {
-        if (page.getCode() != 0 && page.getCode() < 400) {
+    public synchronized void indexingContent(PageTable pageTable, String text) {
+        if (pageTable.getCode() != 0 && pageTable.getCode() < 400) {
             LemmaStorage storage = Morphology.getMorphology(text);
-            Long siteId = page.getSiteId();
+            Long siteId = pageTable.getSiteId();
             List<LemmaTable> list = storage.getList(siteId);
 
             saveAll(list);
@@ -51,7 +52,7 @@ public class LemmaService extends ModelServiceImpl<LemmaTable, Long, LemmaReposi
                 }
             }
 
-            indexDao.saveAll(lemmaList, page.getId());
+            indexDao.saveAll(lemmaList, pageTable.getId());
         }
     }
 
@@ -68,4 +69,5 @@ public class LemmaService extends ModelServiceImpl<LemmaTable, Long, LemmaReposi
     public void deleteByInId(List<Long> list) {
         lemmaRepository.deleteByInSiteId(list);
     }
+
 }

@@ -2,8 +2,11 @@ package searchengine.dao;
 
 import org.springframework.jdbc.core.BatchPreparedStatementSetter;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.core.RowMapper;
 
-public abstract class DaoJdbcImpl implements DaoJdbc {
+import java.util.List;
+
+public abstract class DaoJdbcImpl<E> implements DaoJdbc<E> {
 
     private final JdbcTemplate jdbcTemplate;
 
@@ -16,4 +19,13 @@ public abstract class DaoJdbcImpl implements DaoJdbc {
         jdbcTemplate.batchUpdate(sql, pss);
     }
 
+    @Override
+    public List<E> getContent(String sql, Object[] args, RowMapper<E> rowMapper) {
+        return jdbcTemplate.query(sql, rowMapper, args);
+    }
+
+    @Override
+    public List<E> getContent(String sql, RowMapper<E> rowMapper) {
+        return jdbcTemplate.query(sql, rowMapper);
+    }
 }

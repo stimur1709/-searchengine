@@ -11,7 +11,7 @@ import java.sql.SQLException;
 import java.util.List;
 
 @Component
-public class LemmaDao extends DaoJdbcImpl {
+public class LemmaDao extends DaoJdbcImpl<LemmaTable> {
 
     @Autowired
     protected LemmaDao(JdbcTemplate jdbcTemplate) {

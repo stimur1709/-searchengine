@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.BatchPreparedStatementSetter;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Component;
+import searchengine.model.Index;
 import searchengine.model.LemmaTable;
 
 import java.sql.PreparedStatement;
@@ -11,7 +12,7 @@ import java.sql.SQLException;
 import java.util.List;
 
 @Component
-public class IndexDao extends DaoJdbcImpl {
+public class IndexDao extends DaoJdbcImpl<Index> {
 
     @Autowired
     protected IndexDao(JdbcTemplate jdbcTemplate) {
