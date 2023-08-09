@@ -1,13 +1,13 @@
 package searchengine.services;
 
-import org.jsoup.Jsoup;
-import org.jsoup.nodes.Document;
-import org.jsoup.nodes.Element;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import searchengine.dao.SearchDao;
+import searchengine.dto.statistics.HtmlDocument;
 import searchengine.model.InfoPage;
+import searchengine.util.JSOUPConnection;
 import searchengine.util.Morphology;
+import searchengine.util.Snippet;
 
 import java.util.List;
 
@@ -22,25 +22,34 @@ public class SearchComponent {
     }
 
     public List<InfoPage> searching(String query, String site, int offset, int limit) {
-        List<String> normalWords = Morphology.getNormalWords(query);
-        List<InfoPage> content = searchDao.getContent(site, normalWords);
-        searchingInHtmlCode(content);
+        List<String> searchWords = Morphology.getNormalWords(query);
+        List<InfoPage> content = searchDao.getContent(site, searchWords, offset, limit);
+        searching(content, searchWords);
         return content;
     }
 
-    public void searchingInHtmlCode(List<InfoPage> content) {
+    public void searching(List<InfoPage> content, List<String> searchWords) {
         for (InfoPage infoPage : content) {
-            String snippet = infoPage.getSnippet();
-            Document document = Jsoup.parse(snippet);
-            Element elTitle = document.getElementsByTag("title").first();
-            infoPage.setTitle(elTitle == null ? null : elTitle.text());
-            Element body = document.body();
-            for (Element element : body.getAllElements()) {
-                if (!element.text().isBlank()) {
-                    System.out.println(element.text());
-                }
-            }
-            infoPage.setSnippet(body.text());
+            HtmlDocument document = JSOUPConnection.htmlParse(infoPage.getSnippet());
+            String snippet = paginationElements(document.getElements(), searchWords);
+            infoPage.setSnippet(snippet);
         }
+    }
+
+    public String paginationElements(List<String> elements, List<String> searchWords) {
+        Snippet snippet = new Snippet();
+        for (String element : elements) {
+            if (!element.isBlank()) {
+                List<Integer> indexes = Morphology.getIndexContains(searchWords, element);
+                snippet.update(indexes, element);
+            }
+        }
+        return vold(snippet);
+    }
+
+    public String vold(Snippet snippet) {
+        String[] result = snippet.getText().split(" ");
+        snippet.getIndexes().forEach(index -> result[index] = "<b>" + result[index] + "</b>");
+        return String.join(" ", result);
     }
 }

@@ -55,7 +55,7 @@ public class ApiController {
     public ResponseEntity<List<InfoPage>> search(@RequestParam String query,
                                                  @RequestParam(required = false) String site,
                                                  @RequestParam(defaultValue = "0") int offset,
-                                                 @RequestParam(defaultValue = "20") int limit) {
+                                                 @RequestParam(defaultValue = "200") int limit) {
         return ResponseEntity.ok(searchComponent.searching(query, site, offset, limit));
     }
 

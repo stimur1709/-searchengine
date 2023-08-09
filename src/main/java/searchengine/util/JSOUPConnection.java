@@ -3,6 +3,8 @@ package searchengine.util;
 import lombok.extern.slf4j.Slf4j;
 import org.jsoup.Connection;
 import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
+import org.jsoup.nodes.Element;
 import searchengine.dto.statistics.HtmlDocument;
 
 import java.io.IOException;
@@ -22,8 +24,18 @@ public class JSOUPConnection {
             Thread.sleep(1000);
             return new HtmlDocument(connect.get());
         } catch (IOException | InterruptedException e) {
-            return new HtmlDocument(UrlInfo.getCode(e.getMessage()));
+            return new HtmlDocument(PageProperties.getCodeStatus(e.getMessage()));
         }
+    }
+
+    public static HtmlDocument htmlParse(String html) {
+        Document doc = Jsoup.parse(html);
+        Element elTitle = doc.getElementsByTag("title").first();
+        return new HtmlDocument(
+                doc,
+                elTitle == null ? null : elTitle.text(),
+                doc.getAllElements().eachText()
+        );
     }
 
 

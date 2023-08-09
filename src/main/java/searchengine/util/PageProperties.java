@@ -4,9 +4,9 @@ import org.jsoup.nodes.Document;
 
 import java.util.regex.Pattern;
 
-public class UrlInfo {
+public class PageProperties {
 
-    private UrlInfo() {
+    private PageProperties() {
 
     }
 
@@ -22,11 +22,11 @@ public class UrlInfo {
         return attr.replace(url, "");
     }
 
-    public static int getCode(Document document) {
+    public static int getCodeStatus(Document document) {
         return document.connection().response().statusCode();
     }
 
-    public static int getCode(String error) {
+    public static int getCodeStatus(String error) {
         int code = 0;
         String[] split = error.split(",");
         for (String subs : split) {
@@ -36,4 +36,6 @@ public class UrlInfo {
         }
         return code;
     }
+
+
 }

@@ -64,8 +64,8 @@ public class SiteMap extends RecursiveTask<Site> {
 
     private void adding(Element element, Set<SiteMap> subTask) {
         String newUrl = element.absUrl("href");
-        if (UrlInfo.isCorrectUrl(newUrl, site.getUrl())) {
-            String newPath = UrlInfo.changeUrl(site.getUrl(), newUrl);
+        if (PageProperties.isCorrectUrl(newUrl, site.getUrl())) {
+            String newPath = PageProperties.changeUrl(site.getUrl(), newUrl);
             if (!UrlStorage.containsUrl(site.getId(), newPath)) {
                 SiteMap siteMap = new SiteMap(this, newUrl, newPath);
                 siteMap.fork();

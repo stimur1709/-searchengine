@@ -19,6 +19,7 @@ public class SearchDao extends DaoJdbcImpl<InfoPage> {
                       join site s on s.id = p.site_id
              where l.lemma in (%s) %s
              order by l.frequency
+             limit %d offset %d
             """;
 
     @Autowired
@@ -26,11 +27,13 @@ public class SearchDao extends DaoJdbcImpl<InfoPage> {
         super(jdbcTemplate);
     }
 
-    public List<InfoPage> getContent(String site, List<String> lemmas) {
+    public List<InfoPage> getContent(String site, List<String> lemmas, int offset, int limit) {
         String sql = String.format(
                 SQL_BY_SITE_AND_LEMMAS,
                 String.join(", ", lemmas.stream().map(s -> "'" + s + "'").toList()),
-                site == null ? " " : (" and s.url = " + site)
+                site == null ? " " : (" and s.url = '" + site + "'"),
+                limit,
+                offset
         );
         return getContent(sql, new BeanPropertyRowMapper<>(InfoPage.class));
     }

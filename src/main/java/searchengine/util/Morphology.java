@@ -57,6 +57,23 @@ public class Morphology {
         return words;
     }
 
+    public static List<Integer> getIndexContains(List<String> searchWord, String comparedText) {
+        List<Integer> indexes = new ArrayList<>();
+
+        String[] split = comparedText.split(" ");
+        for (int i = 0; i < split.length; i++) {
+            String word = split[i];
+            word = word.trim().toLowerCase();
+            if (!word.isBlank() && word.length() > 2) {
+                Language language = checkLanguage(word);
+                if ((language == Language.EN && searchWord.contains(getMorphInfo(englishLuceneMorph, word, EN_PARTS)))
+                        || (language == Language.RU && searchWord.contains(getMorphInfo(russianLuceneMorph, word, RU_PARTS)))) {
+                    indexes.add(i);
+                }
+            }
+        }
+        return indexes;
+    }
 
     private static Language checkLanguage(String word) {
         if (LanguageChecker.isEnglish(word)) {
@@ -69,7 +86,7 @@ public class Morphology {
     }
 
     private static String getMorphInfo(LuceneMorphology luceneMorphology, String word, String[] parts) {
-        List<String> morphInfo = luceneMorphology.getMorphInfo(word);
+        List<String> morphInfo = luceneMorphology.getMorphInfo(word.toLowerCase());
         String[] s = morphInfo.get(0).split(" ");
         if (luceneMorphology.checkString(word) && Arrays.stream(parts).noneMatch(w -> w.equals(s[1]))) {
             return luceneMorphology.getNormalForms(word).get(0);
