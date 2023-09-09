@@ -85,7 +85,7 @@
             </column>
             <column name="page_id" type="BIGINT"/>
             <column name="lemma_id" type="BIGINT"/>
-            <column name="rank" type="INT" defaultValue="1">
+            <column name="rank" type="float" defaultValue="1">
                 <constraints nullable="false"/>
             </column>
         </createTable>

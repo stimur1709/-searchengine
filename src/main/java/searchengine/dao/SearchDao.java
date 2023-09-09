@@ -12,15 +12,21 @@ import java.util.List;
 public class SearchDao extends DaoJdbcImpl<InfoPage> {
 
     private static final String SQL_BY_SITE_AND_LEMMAS = """
-             select s.url as site, s.name as site_name, p.path as uri, p.content as snippet, 0 as relevance\s
-             from page p
-                      join index i on p.id = i.page_id
-                      join lemma l on l.id = i.id
-                      join site s on s.id = p.site_id
-             where l.lemma in (%s) %s
-             order by l.frequency
-             limit %d offset %d
-            """;
+            with rank_index as (select i.page_id, sum(i.rank) sum_rank
+                                from lemma l
+                                         join index i on l.id = i.lemma_id
+                                         join page p on p.id = i.page_id
+                                         join site s on s.id = p.site_id
+                                where l.lemma in (%s) %s
+                                group by i.page_id
+                                limit %d offset %d)
+            select s.url site, s.name site_name, p.path uri, p.content snippet, r.sum_rank / max(r1.sum_rank) relevance
+            from site s
+                     join page p on s.id = p.site_id
+                     join rank_index r on r.page_id = p.id
+                     cross join rank_index r1
+            group by s.url, s.name, p.path, p.content, r.sum_rank
+            order by relevance desc""";
 
     @Autowired
     protected SearchDao(JdbcTemplate jdbcTemplate) {

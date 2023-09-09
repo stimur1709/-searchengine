@@ -16,9 +16,9 @@ public class Snippet {
     private int count = 0;
     private String text = "";
 
-   public void update(List<Integer> indexes, String text) {
-       int size = indexes.size();
-       if (this.count < size) {
+    public void update(List<Integer> indexes, String text) {
+        int size = indexes.size();
+        if (this.count < size) {
             this.count = size;
             this.text = text;
             this.indexes = indexes;

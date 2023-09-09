@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import searchengine.dao.SearchDao;
 import searchengine.dto.statistics.HtmlDocument;
+import searchengine.dto.statistics.SearchData;
 import searchengine.model.InfoPage;
 import searchengine.util.JSOUPConnection;
 import searchengine.util.Morphology;
@@ -21,11 +22,11 @@ public class SearchComponent {
         this.searchDao = searchDao;
     }
 
-    public List<InfoPage> searching(String query, String site, int offset, int limit) {
+    public SearchData searching(String query, String site, int offset, int limit) {
         List<String> searchWords = Morphology.getNormalWords(query);
         List<InfoPage> content = searchDao.getContent(site, searchWords, offset, limit);
         searching(content, searchWords);
-        return content;
+        return new SearchData(content);
     }
 
     public void searching(List<InfoPage> content, List<String> searchWords) {
@@ -33,6 +34,7 @@ public class SearchComponent {
             HtmlDocument document = JSOUPConnection.htmlParse(infoPage.getSnippet());
             String snippet = paginationElements(document.getElements(), searchWords);
             infoPage.setSnippet(snippet);
+            infoPage.setTitle(document.getTitle());
         }
     }
 

@@ -7,7 +7,6 @@ import searchengine.dao.LemmaDao;
 import searchengine.model.LemmaTable;
 import searchengine.model.PageTable;
 import searchengine.repository.LemmaRepository;
-import searchengine.repository.PageRepository;
 import searchengine.util.LemmaStorage;
 import searchengine.util.Morphology;
 

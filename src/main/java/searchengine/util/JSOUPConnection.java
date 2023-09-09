@@ -33,7 +33,7 @@ public class JSOUPConnection {
         Element elTitle = doc.getElementsByTag("title").first();
         return new HtmlDocument(
                 doc,
-                elTitle == null ? null : elTitle.text(),
+                elTitle == null ? "" : elTitle.text(),
                 doc.getAllElements().eachText()
         );
     }
